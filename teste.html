@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+    <footer><div id=version></div></footer>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <script>
+
+      let w = 1920;
+      let h = 1080;
+      let midw = parseInt(w / 2);
+      let midh = parseInt(h / 2);
+      var game = new Phaser.Game({
+        type: Phaser.AUTO,
+        width: w,
+        height: h,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                debug: false,
+                debugShowVelocity: false,
+                gravity: { y: 300 }
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create
+        }
+      });
+      function preload() {
+        this.load.image('mapa', 'assets/mapa.png');
+        this.load.image("limits", "assets/limits.png");
+        this.load.spritesheet("ball", "assets/bomb.png", {
+          frameWidth: 17,
+          frameHeight: 17
+        });
+      }
+    
+      function create() {
+        this.add.image(midw, midh, "mapa");
+        
+        var logo = this.physics.add.staticImage(midw, midh, "limits");
+      
+        var logoTopLeft = logo.getTopLeft();
+      
+        var balls = this.physics.add.group({
+          bounceX: 1,
+          bounceY: 1,
+          collideWorldBounds: true,
+          defaultKey: "ball",
+          frameQuantity: 2,
+          key: "ball",
+          x: 200,
+          setXY: { stepX: 10, stepY: 50 },
+          velocityX: 150
+        });
+      
+        this.physics.add.overlap(
+          logo,
+          balls,
+          function overlap(_logo, ball) {
+            ball.setFrame(5).disableBody();
+          },
+          function process(_logo, ball) {
+            // It would be more efficient to create a CanvasTexture and check that instead.
+            // But getPixelAlpha() is convenient for an example.
+      
+            return (
+              this.textures.getPixelAlpha(
+                Math.floor(ball.body.center.x - logoTopLeft.x),
+                Math.floor(ball.body.center.y - logoTopLeft.y),
+                "limits"
+              ) === 255
+            );
+          },
+          this
+        );
+      }
+    </script>
+</body>
+</html>
