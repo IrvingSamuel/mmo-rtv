@@ -4,7 +4,8 @@
 //noinspection JSCheckFunctionSignatures,JSCheckFunctionSignatures,JSCheckFunctionSignatures
 let w = 1920;
 let h = 1920;
-var cw = (screen.width * 0.8);
+// var cw = (screen.width * 0.8);
+var cw = screen.width;
 var ch = screen.height;
 let dw;
 let dh;
